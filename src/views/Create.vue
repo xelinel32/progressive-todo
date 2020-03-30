@@ -52,7 +52,8 @@ export default {
         data: this.date.data
       }
 
-      console.log(task)
+      this.$store.dispatch('createTask', task);
+      this.$router.push('/list');
     }
   },
   destroyed(){
