@@ -1,4 +1,4 @@
-# tasklist
+# Simple VUE 🤡 TASK LIST
 
 ## Project setup
 ```
