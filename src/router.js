@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Create from './views/Create.vue';
 
 Vue.use(VueRouter);
 
@@ -10,8 +9,8 @@ const router = new VueRouter({
   routes: [
     {
       path: '/',
-      name: 'create', 
-      component: Create
+      name: 'create',
+      component: () => import('./views/Create.vue')
     },
     {
       path: '/list',
