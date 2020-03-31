@@ -1,7 +1,7 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from 'vue';
+import Vuex from 'vuex';
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
@@ -9,7 +9,7 @@ export default new Vuex.Store({
   },
   mutations: {
     createTask(state, task) {
-      state.tasks(task);
+      state.tasks.push(task);
       localStorage.setItem('tasks', JSON.stringify(state.tasks));
     }
   },
@@ -18,5 +18,7 @@ export default new Vuex.Store({
       commit('createTask', task);
     }
   },
-  modules: {}
+  getters: {
+    tasks: s => s.tasks
+  }
 });
