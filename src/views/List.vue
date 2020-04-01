@@ -20,8 +20,8 @@
           <td>{{ idx + 1 }}</td>
           <td>{{ task.title }}</td>
           <td>{{ new Date(task.date).toLocaleDateString() }}</td>
-          <td>
-            <div>{{ task.description }}</div>
+          <td class="is_clip">
+            <div class="cliptext">{{ task.description }}</div>
           </td>
           <td>{{ task.status }}</td>
           <td>
@@ -49,4 +49,13 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.cliptext {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.is_clip {
+  max-width: 250px;
+}
+</style>
