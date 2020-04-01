@@ -21,7 +21,7 @@
             id="description"
             class="materialize-textarea"
           ></textarea>
-          <label for="description">Textarea</label>
+          <label for="description">Description</label>
           <span class="character-counter" style="float: right; font-size: 12px;"
             >{{ description.length }}/1337</span
           >
@@ -45,14 +45,14 @@ export default {
     date: null
   }),
   mounted() {
-    (this.chips = M.Chips.init(this.$refs.chips, {
+    this.chips = M.Chips.init(this.$refs.chips, {
       placeholder: 'Tast tags'
-    })),
-      (this.date = M.Datepicker.init(this.$refs.datepicker, {
+    }),
+    this.date = M.Datepicker.init(this.$refs.datepicker, {
         format: 'dd.mm.yyyy',
         defaultDate: new Date(),
         setDefaultDate: true
-      }));
+    })
   },
   methods: {
     submitHandler() {
