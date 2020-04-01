@@ -18,8 +18,10 @@
         <input type="text" ref="datepicker" />
         <br />
         <br />
-        <button class="btn primary__btn" type="submit">Update</button>
-        <button class="btn blue" type="button" @click="completeTask">Complete task</button>
+        <div v-if="task.status !== 'completed'">
+          <button class="btn primary__btn" type="submit">Update</button>
+          <button class="btn blue" type="button" @click="completeTask">Complete task</button>
+        </div>
       </form>
     </div>
     <p v-else>Task not found</p>
@@ -46,9 +48,9 @@ export default {
       data: this.task.tags
     }),
     this.date = M.Datepicker.init(this.$refs.datepicker, {
-        format: 'dd.mm.yyyy',
-        defaultDate: new Date(this.task.date),
-        setDefaultDate: true
+      format: 'dd.mm.yyyy',
+      defaultDate: new Date(this.task.date),
+      setDefaultDate: true
     }),
     setTimeout(() => {
       M.updateTextFields()
@@ -58,14 +60,14 @@ export default {
     submitHandler() {
       this.$store.dispatch('updateTask', {
         id: this.task.id,
-        description: this.description,
+        description: this.description,  
         date: this.date.date
       });
       this.$router.push('/list');
     },
     completeTask() {
-      this.$store.dispatch('completeTask', this.task.id)
-      this.$router.push('/list')
+      this.$store.dispatch('completeTask', this.task.id);
+      this.$router.push('/list');
     }
   },
   destroyed() {
@@ -86,5 +88,8 @@ export default {
 }
 .primary__btn{
   margin-right: 10px;
+}
+textarea{
+  min-height: 125px
 }
 </style>
