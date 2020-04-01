@@ -62,7 +62,7 @@ export default {
         id: Date.now(),
         status: 'active',
         tags: this.chips.chipsData,
-        data: this.date.date
+        date: this.date.date
       };
 
       this.$store.dispatch('createTask', task);
