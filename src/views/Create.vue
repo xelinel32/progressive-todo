@@ -1,81 +1,36 @@
 <template>
   <div class="row">
-    <div class="col s6 offset-s3">
-      <h1>Create task now</h1>
-      <form @submit.prevent="submitHandler">
-        <div class="input-field">
-          <input
-            v-model="title"
-            id="first_name"
-            type="text"
-            class="validate"
-            required
-          />
-          <label for="first_name">Title</label>
-          <span class="helper-text" data-error="Title is required"></span>
-        </div>
-        <div class="chips" ref="chips"></div>
-        <div class="input-field">
-          <textarea
-            v-model="description"
-            id="description"
-            class="materialize-textarea"
-          ></textarea>
-          <label for="description">Description</label>
-          <span class="character-counter" style="float: right; font-size: 12px;"
-            >{{ description.length }}/1337</span
+    <div class="col m6 s12 offset-m3">
+      <h4 class="flow-text">Create task</h4>
+      <submit-form @savedData="queryData">
+        <template #buttons>
+          <button
+            class="btn waves-effect waves-light green"
+            type="submit"
+            name="action"
           >
-        </div>
-        <input type="text" ref="datepicker" />
-        <br />
-        <br />
-        <button class="btn" type="submit">Create task</button>
-      </form>
+            Submit
+            <i class="material-icons right">send</i>
+          </button>
+        </template>
+      </submit-form>
     </div>
   </div>
 </template>
 
 <script>
+import submitForm from '@/components/SubmitForm.vue'
 export default {
-  name: 'create',
-  data: () => ({
-    description: '',
-    title: '',
-    chips: null,
-    date: null
-  }),
-  mounted() {
-    this.chips = M.Chips.init(this.$refs.chips, {
-      placeholder: 'Tast tags'
-    }),
-    this.date = M.Datepicker.init(this.$refs.datepicker, {
-        format: 'dd.mm.yyyy',
-        defaultDate: new Date(),
-        setDefaultDate: true
-    })
-  },
+  name: 'Create',
+  data: () => ({}),
+  components: { submitForm },
   methods: {
-    submitHandler() {
-      const task = {
-        title: this.title,
-        description: this.description,
-        id: Date.now(),
-        status: 'active',
-        tags: this.chips.chipsData,
-        date: this.date.date
-      };
-
-      this.$store.dispatch('createTask', task);
-      this.$router.push('/list');
-    }
+    async queryData(data) {
+      await this.$store.dispatch('sendData', data).then(() => {
+        this.$message('Task is added!')
+        this.$router.push('/list')
+      })
+    },
   },
-  destroyed() {
-    if (this.date && this.date.destroy) {
-      this.date.destroy();
-    }
-    if (this.chips && this.chips.destroy) {
-      this.chips.destroy();
-    }
-  }
-};
+}
 </script>

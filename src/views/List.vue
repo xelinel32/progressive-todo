@@ -1,90 +1,93 @@
 <template>
-  <div>
-    <h1>List</h1>
-    <!-- filter -->
-    <div class="filter">
-      <select ref="select" v-model="filter">
-        <option value="" disabled selected>Choose filter</option>
-        <option value="active">Active</option>
-        <option value="outdated">Autdated</option>
-        <option value="completed">Completed</option>
-      </select>
-      <label>Status filter</label>
+  <div class="row">
+    <div class="col m12">
+      <h4 class="text-flow">List of the tasks</h4>
+      <span class="text-flow">Total items - <strong>{{ getTaskLength }}</strong></span>
+      <loading v-if="!getTaskLength" isLoading />
+      <div v-else>
+        <sorting @setFilterFor="setStatusItem" />
+        <table class="highlight responsive-table centered">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <list-item v-for="(task, idx) in tasks" :key="idx" :task="task">
+              <template #counter>{{ idx + 1 }}</template>
+            </list-item>
+          </tbody>
+        </table>
+        <vue-paginate
+          v-model="page"
+          :page-count="pageCount"
+          :click-handler="pageChangeHandler"
+          :prev-text="leftBtn"
+          :next-text="rightBtn"
+          :container-class="'pagination'"
+          :page-class="'waves-effect'"
+          :active-class="'green active'"
+        />
+      </div>
     </div>
-    <button v-if="filter" class="btn btn-small red" @click="filter = null">Clear</button>
-    <!-- filter end-->
-    <hr />
-
-    <table v-if="tasks.length">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Name</th>
-          <th>Date</th>
-          <th>Description</th>
-          <th>Status</th>
-          <th>Open</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(task, idx) of displayTasks" :key="task.id">
-          <td>{{ idx + 1 }}</td>
-          <td>{{ task.title }}</td>
-          <td>{{ new Date(task.date).toLocaleDateString() }}</td>
-          <td class="is_clip">
-            <div class="cliptext">{{ task.description }}</div>
-          </td>
-          <td>{{ task.status }}</td>
-          <td>
-            <router-link
-              tag="button"
-              class="btn btn-small"
-              :to="'/task/' + task.id"
-              >Open</router-link
-            >
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <p v-else>Task list empty</p>
   </div>
 </template>
 
 <script>
+import listItem from '@/components/ListItem'
+import PaginateMixin from '@/modules/paginateMixin'
+import { mapGetters } from 'vuex'
+import Sorting from '@/components/Sorting'
 export default {
+  name: 'List',
   data: () => ({
-    filter: null,
+    sortedElements: [],
   }),
   computed: {
-    tasks() {
-      return this.$store.getters.tasks;
+    ...mapGetters([
+      'getTaskLength',
+      'getTask',
+      'getTaskByActive',
+      'getTaskByOutdated',
+    ]),
+    leftBtn() {
+      return '<i class="material-icons">chevron_left</i>'
     },
-    displayTasks() {
-      return this.tasks.filter(t => {
-        if(!this.filter){
-          return true
-        } else {
-          return t.status === this.filter;
-        }
-      })
+    rightBtn() {
+      return '<i class="material-icons">chevron_right</i>'
     }
   },
-  mounted(){
-    M.FormSelect.init(this.$refs.select);
-  }
-};
+  components: { listItem, Sorting },
+  methods: {
+    setStatusItem(status) {
+      this.selectedItem = status
+      if (status === 'all') {
+        this.setupPagination(this.getTask)
+      } else if(status === 'active'){
+        this.setupPagination(this.getTaskByActive)
+      } else if (status === 'outdated') {
+        this.setupPagination(this.getTaskByOutdated)
+      }
+    },
+  },
+  mixins: [PaginateMixin],
+  async created() {
+    await this.$store.dispatch('getData')
+  },
+}
 </script>
 
 <style lang="scss" scoped>
-.cliptext {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-.is_clip {
-  max-width: 250px;
-}
-.filter{
-  max-width: 170px
+.pagination {
+  li {
+    &.active {
+      background-color: lime;
+    }
+  }
 }
 </style>
